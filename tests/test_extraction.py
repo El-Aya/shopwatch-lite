@@ -86,6 +86,34 @@ class TestExtraction(unittest.TestCase):
         with self.assertRaises(ValueError):
             lire_scan({"id_faille": "X", "paquet": "p", "risque": "haut"}, 1)
 
+    # ---- lire_build
+    def test_lire_build_echec(self):
+        rapport = {"etape": "deploiement", "resultat": "echec",
+                   "date": "2026-11-27T17:08:00Z"}
+        sig = lire_build(rapport, 8)
+        self.assertEqual(sig.ref, "SH-0008")
+        self.assertEqual(sig.origine, "BUILD")
+        self.assertEqual(sig.service, "deploiement")
+        self.assertEqual(sig.categorie, "BUILD_ECHEC")
+        self.assertEqual(sig.gravite, "MAJEUR")
+        self.assertEqual(sig.texte, "Build deploiement : echec")
+
+    def test_lire_build_ok(self):
+        rapport = {"etape": "tests", "resultat": "succes",
+                   "date": "2026-11-27T17:08:00Z"}
+        sig = lire_build(rapport, 3)
+        self.assertEqual(sig.categorie, "BUILD_OK")
+        self.assertEqual(sig.gravite, "MINEUR")
+
+    def test_lire_build_echec_casse_ignoree(self):
+        rapport = {"etape": "tests", "resultat": "ECHEC",
+                   "date": "2026-11-27T17:08:00Z"}
+        self.assertEqual(lire_build(rapport, 1).categorie, "BUILD_ECHEC")
+
+    def test_lire_build_cle_manquante(self):
+        with self.assertRaises(ValueError):
+            lire_build({"etape": "tests", "resultat": "echec"}, 1)
+
 
 if __name__ == "__main__":
     unittest.main()
