@@ -25,7 +25,6 @@ def sig(
         texte,
     )
 
-
 class TestAnalyse(unittest.TestCase):
 
     def test_repete(self):
