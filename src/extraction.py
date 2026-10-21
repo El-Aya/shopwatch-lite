@@ -41,8 +41,23 @@ def lire_journal(ligne: str, numero: int, origine: str = "PAIEMENT",
     )
 
 
+_GRAVITE_SCAN = {"critique": "BLOQUANT", "haut": "MAJEUR", "moyen": "MODERE"}
+
+
 def lire_scan(rapport: dict, numero: int, env: str = "production") -> Signal:
-    raise NotImplementedError
+    for cle in ("id_faille", "paquet", "risque", "date"):
+        if cle not in rapport:
+            raise ValueError(f"cle manquante dans le rapport de scan : {cle}")
+    return Signal(
+        ref=f"SH-{numero:04d}",
+        date=rapport["date"],
+        origine="SCANNER",
+        service=rapport["paquet"],
+        env=env,
+        categorie="FAILLE",
+        gravite=_GRAVITE_SCAN.get(str(rapport["risque"]).lower(), "MINEUR"),
+        texte=f"Faille {rapport['id_faille']} dans {rapport['paquet']}",
+    )
 
 
 def lire_build(rapport: dict, numero: int, env: str = "production") -> Signal:

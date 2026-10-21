@@ -61,6 +61,31 @@ class TestExtraction(unittest.TestCase):
         with self.assertRaises(ValueError):
             lire_journal("2026-11-27 17:00:00 paiement ERROR", 1)
 
+    # ---- lire_scan
+    def test_lire_scan(self):
+        rapport = {"id_faille": "CVE-2026-7788", "paquet": "lib-panier",
+                   "risque": "critique", "date": "2026-11-27T17:09:00Z"}
+        sig = lire_scan(rapport, 9)
+        self.assertEqual(sig.ref, "SH-0009")
+        self.assertEqual(sig.origine, "SCANNER")
+        self.assertEqual(sig.service, "lib-panier")
+        self.assertEqual(sig.categorie, "FAILLE")
+        self.assertEqual(sig.gravite, "BLOQUANT")
+        self.assertEqual(sig.date, "2026-11-27T17:09:00Z")
+        self.assertEqual(sig.texte, "Faille CVE-2026-7788 dans lib-panier")
+
+    def test_lire_scan_gravites(self):
+        attendu = {"critique": "BLOQUANT", "haut": "MAJEUR", "moyen": "MODERE",
+                   "bas": "MINEUR", "HAUT": "MAJEUR"}
+        for risque, gravite in attendu.items():
+            rapport = {"id_faille": "X", "paquet": "p", "risque": risque,
+                       "date": "2026-11-27T17:09:00Z"}
+            self.assertEqual(lire_scan(rapport, 1).gravite, gravite, risque)
+
+    def test_lire_scan_cle_manquante(self):
+        with self.assertRaises(ValueError):
+            lire_scan({"id_faille": "X", "paquet": "p", "risque": "haut"}, 1)
+
 
 if __name__ == "__main__":
     unittest.main()
