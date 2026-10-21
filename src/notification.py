@@ -37,3 +37,16 @@ def diffuser(sig: Signal, diag: Diagnostic, registre: list) -> Message:
     registre.append(msg)
     sig.etat = "DIFFUSE"
     return msg
+def approuver(diag: Diagnostic, reponse: str) -> bool:
+    if not diag.critique:
+        return True
+    return reponse.strip().lower() in {"o", "oui", "ok", "yes"}
+
+
+def consigner(diag: Diagnostic, accord: bool, responsable: str,
+              carnet: list, instant: str) -> dict:
+    entree = {"ref": diag.signal_ref, "action": diag.action,
+              "accord": accord, "responsable": responsable,
+              "instant": instant}
+    carnet.append(entree)
+    return entree  
