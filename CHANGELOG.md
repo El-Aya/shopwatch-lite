@@ -4,4 +4,6 @@
 - Agent Extraction : lecture et normalisation des signaux (A)
 
 ## [0.1.0]
+
 - Squelette du projet : contrat, agents vides, workflow, demo.
+- Agent Notification : canaux, validation humaine, journal d'audit (C)
