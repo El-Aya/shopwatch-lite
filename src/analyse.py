@@ -1,6 +1,5 @@
 from src.contrat import Diagnostic, Signal
 
-
 def est_repete(sig: Signal, vus: set) -> bool:
     """Clé (date, origine, service, categorie, texte).
     Renvoie True si la clé est déjà dans vus ; sinon l'ajoute et renvoie False."""
