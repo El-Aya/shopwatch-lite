@@ -31,3 +31,9 @@ def approuver(diag: Diagnostic, reponse: str) -> bool:
 def consigner(diag: Diagnostic, accord: bool, responsable: str,
               carnet: list, instant: str) -> dict:
     raise NotImplementedError
+def diffuser(sig: Signal, diag: Diagnostic, registre: list) -> Message:
+    msg = Message(sig.ref, choisir_canal(diag.niveau),
+                  "astreinte-shop", composer(sig, diag))
+    registre.append(msg)
+    sig.etat = "DIFFUSE"
+    return msg
